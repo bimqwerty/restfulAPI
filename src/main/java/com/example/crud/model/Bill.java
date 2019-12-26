@@ -34,7 +34,9 @@ public class Bill {
     @Column(name = "updated_date")
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date updatedDate;
-    
+
+
+//    aaaa
     
 
 	@Column(name = "payment_method_id")
