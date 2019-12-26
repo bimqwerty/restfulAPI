@@ -36,8 +36,7 @@ public class Bill {
     private Date updatedDate;
 
 
-//    aaaa
-    
+
 
 	@Column(name = "payment_method_id")
     private Integer paymentMethodId;

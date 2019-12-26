@@ -22,7 +22,7 @@ public class User {
     private Integer enable;
 
 
-    dsfd
+    
 
     public Integer getId() {
 		return id;

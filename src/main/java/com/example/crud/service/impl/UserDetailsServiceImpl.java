@@ -1,10 +1,13 @@
 package com.example.crud.service.impl;
 
+import com.example.crud.model.Role;
+import com.example.crud.model.User;
+import com.example.crud.repository.RoleRepository;
 import com.example.crud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,26 +18,26 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
+    
+    @Autowired
+    RoleRepository roleRepository;
 	
     @Override
      public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-     //Buscar el usuario con el repositorio y si no existe lanzar una exepcion
-        com.example.crud.model.User appUser =
-                 userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("No existe usuario"));
+
+        User appUser = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("No existe usuario"));
 		
-    //Mapear nuestra lista de Authority con la de spring security
-
-
+        List<Role> roles=roleRepository.findByUserId(appUser.getId());
+        
     List grantList = new ArrayList();
-    for (Authority authority: appUser.getAuthority()) {
+    for (Role role: roles) {
         // ROLE_USER, ROLE_ADMIN,..
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getAuthority());
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(role.getRolename());
             grantList.add(grantedAuthority);
     }
-		
-    //Crear El objeto UserDetails que va a ir en sesion y retornarlo.
-    UserDetails user = (UserDetails) new User(appUser.getUsername(), appUser.getPassword(), grantList);
+	
+    UserDetails user = (UserDetails) new org.springframework.security.core.userdetails.User(appUser.getUsername(), appUser.getPassword(), grantList);
          return user;
     }
 }
