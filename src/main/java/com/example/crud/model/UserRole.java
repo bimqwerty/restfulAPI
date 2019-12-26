@@ -6,6 +6,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "user_role")
 public class UserRole {
+
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.AUTO)

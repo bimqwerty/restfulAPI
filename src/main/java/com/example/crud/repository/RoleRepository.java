@@ -13,6 +13,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoleRepository extends CrudRepository<Role, Integer> {
-    @Query("from UserRole u where u.user_id=:userId")
-    List<Role> findByUserId(Integer userId) ;
 }
