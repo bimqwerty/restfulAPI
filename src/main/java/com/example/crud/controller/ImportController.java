@@ -65,8 +65,15 @@ public class ImportController {
         }
 
        
-        currentImport.get().setProvider(imports.getProvider());
+        currentImport.get().setProviderId(imports.getProviderId());
         currentImport.get().setInvoiceCode(imports.getInvoiceCode());
+        currentImport.get().setCreatedDate(imports.getCreatedDate());
+        currentImport.get().setUpdatedDate(imports.getUpdatedDate());
+        currentImport.get().setDescription(imports.getDescription());
+        currentImport.get().setPaymentMethodId(imports.getPaymentMethodId());
+        currentImport.get().setUserId(imports.getUserId());
+
+
       currentImport.get().setDescription(imports.getDescription());
 
       importsService.save(currentImport.get());
