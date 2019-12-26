@@ -22,9 +22,6 @@ public class Bill {
     @Column(name = "user_id")
     private Integer userId;
 
-
-    caaxx
-
     @Column(name = "tax_code")
     private Integer taxCode;
     
