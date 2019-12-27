@@ -1,6 +1,10 @@
 package com.example.crud.controller;
 
 
+import com.example.crud.constants.ResponseCode;
+import com.example.crud.model.Customer;
+import com.example.crud.repository.ProviderRepository;
+import com.example.crud.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +22,10 @@ public class ProviderController {
 	
 	@Autowired
     private ProviderService providerService;
+
+	@Autowired
+    private ProviderRepository providerRepository ;
+
 
 
     @RequestMapping(value = "/providers", method = RequestMethod.GET)
@@ -83,6 +91,25 @@ public class ProviderController {
         }
         providerService.remove(provider.get());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    @RequestMapping(value = "/provider/search", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    @ResponseBody
+    public ResponseEntity<Response> getListProviders(
+            @RequestParam(value = "name", required = false, defaultValue = "") String name
+            ) {
+        Response response = new Response();
+        List<Provider> providers = null;
+        try {
+            providers = providerRepository.findByProvider(name);
+            response.setCode(ResponseCode.SUCCESS);
+            response.setData(providers);
+        }catch(Exception e) {
+//            logger.info("ERROR getProviders method GET : " + e.toString());
+            System.out.println("ERROR getProviders method GET : " + e.toString());
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
 

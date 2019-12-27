@@ -1,7 +1,12 @@
 package com.example.crud.controller;
 
 
+import com.example.crud.constants.ResponseCode;
+import com.example.crud.repository.CustomerRepository;
+import com.example.crud.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +26,9 @@ public class CustomerController {
 	
 	@Autowired
     private CustomerService customerService;
+
+	@Autowired
+    private CustomerRepository customerRepository ;
 
 
     @RequestMapping(value = "/customers", method = RequestMethod.GET)
@@ -87,5 +95,27 @@ public class CustomerController {
         customerService.remove(customer.get());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+
+
+    @RequestMapping(value = "/customer/search", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    @ResponseBody
+    public ResponseEntity<Response> getListCustomers(
+            @RequestParam(value = "name", required = false, defaultValue = "") String name,
+            @RequestParam(value = "email", required = false, defaultValue = "") String email,
+            @RequestParam(value = "phoneNumber", required = false, defaultValue = "") String phoneNumber) {
+        Response response = new Response();
+        List<Customer> customers = null;
+        try {
+            customers = customerRepository.findByCustomer(name,email,phoneNumber);
+            response.setCode(ResponseCode.SUCCESS);
+            response.setData(customers);
+        }catch(Exception e) {
+//            logger.info("ERROR getProviders method GET : " + e.toString());
+            System.out.println("ERROR getProviders method GET : " + e.toString());
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
 

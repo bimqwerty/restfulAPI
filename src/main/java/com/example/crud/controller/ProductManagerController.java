@@ -1,5 +1,9 @@
 package com.example.crud.controller;
 
+import com.example.crud.constants.ResponseCode;
+import com.example.crud.model.Provider;
+import com.example.crud.repository.ProductRepository;
+import com.example.crud.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,10 @@ public class ProductManagerController {
 	
 	@Autowired
     private ProductService productService;
+
+	@Autowired
+    private ProductRepository productRepository ;
+
 
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
@@ -81,5 +89,23 @@ public class ProductManagerController {
         }
         productService.remove(product.get());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/product/search", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    @ResponseBody
+    public ResponseEntity<Response> getListProducts(
+            @RequestParam(value = "name", required = false, defaultValue = "") String name
+    ) {
+        Response response = new Response();
+        List<Product> products = null;
+        try {
+            products = productRepository.findByProduct(name);
+            response.setCode(ResponseCode.SUCCESS);
+            response.setData(products);
+        }catch(Exception e) {
+//            logger.info("ERROR getProviders method GET : " + e.toString());
+            System.out.println("ERROR getProviders method GET : " + e.toString());
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
