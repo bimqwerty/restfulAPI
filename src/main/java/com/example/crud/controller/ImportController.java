@@ -9,10 +9,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.example.crud.model.Bill;
 import com.example.crud.model.Import;
+import com.example.crud.model.ImportProduct;
+import com.example.crud.repository.ImportProductRepository;
+import com.example.crud.repository.ImportRepository;
+import com.example.crud.request.ImportRequest;
+import com.example.crud.service.ImportProductService;
 import com.example.crud.service.ImportService;
 import com.example.crud.service.impl.ImportServiceImpl;
 
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +30,14 @@ public class ImportController {
 	@Autowired
     private ImportService importsService;
 
+	@Autowired
+	ImportRepository importRepository;
+	
+	@Autowired
+	ImportProductService importProductService;
+	
+	@Autowired
+	ImportProductRepository importProductRepository;
 
     @RequestMapping(value = "/imports/getAll", method = RequestMethod.GET)
     public ResponseEntity<List<Import>> findAllImport() {
@@ -48,8 +64,28 @@ public class ImportController {
 
     @RequestMapping(value = "/imports",
             method = RequestMethod.POST)
-    public ResponseEntity<Import> createImport(@RequestBody Import imports) {
+    public ResponseEntity<Import> createImport(@RequestBody ImportRequest importRequest) {
+    	Import imports = new Import();
+    	imports.setCreatedDate(new Date());
+    	imports.setUpdatedDate(new Date());
+    	imports.setDescription(importRequest.getDescription());
+    	imports.setUserId(importRequest.getUserId());
+    	imports.setProviderId(importRequest.getProviderId());
+    	imports.setPaymentMethodId(importRequest.getPaymentMethodId());
+    	imports.setInvoiceCode(importRequest.getInvoiceCode());
     	importsService.save(imports);
+    	
+    	List<Integer> productList = importRequest.getProductIdList();
+    	Integer idImport= importRepository.getMaxId();
+    	
+        Iterator<Integer> iter = productList.iterator();
+        while (iter.hasNext()) {
+        	ImportProduct importProduct = new ImportProduct();
+        	importProduct.setImportId(idImport);
+        	importProduct.setProductId(iter.next());
+        	importProductService.save(importProduct);
+        }
+    	
         return new ResponseEntity<>(imports, HttpStatus.CREATED);
     }
 
@@ -57,28 +93,34 @@ public class ImportController {
             method = RequestMethod.PUT)
     public ResponseEntity<Import> updateImport(
             @PathVariable("id") Integer id,
-            @RequestBody Import imports) {
-        Optional<Import> currentImport = importsService.findById(id);
-
-        if (!currentImport.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            @RequestBody ImportRequest importRequest) {
+        Optional<Import> importOpt = importsService.findById(id);
+        Import imports = importOpt.get();
+    	
+    	
+    	imports.setUpdatedDate(new Date());
+    	imports.setDescription(importRequest.getDescription());
+    	imports.setUserId(importRequest.getUserId());
+    	imports.setProviderId(importRequest.getProviderId());
+    	imports.setPaymentMethodId(importRequest.getPaymentMethodId());
+    	imports.setInvoiceCode(importRequest.getInvoiceCode());
+    	importsService.save(imports);
+    	
+    	importProductRepository.deleteImportProduct(id);
+    	
+    	List<Integer> productList = importRequest.getProductIdList();   	
+    	
+        Iterator<Integer> iter = productList.iterator();
+        while (iter.hasNext()) {
+        	ImportProduct importProduct = new ImportProduct();
+        	importProduct.setImportId(id);
+        	importProduct.setProductId(iter.next());
+        	importProductService.save(importProduct);
         }
-
-       
-        currentImport.get().setProviderId(imports.getProviderId());
-        currentImport.get().setInvoiceCode(imports.getInvoiceCode());
-        currentImport.get().setCreatedDate(imports.getCreatedDate());
-        currentImport.get().setUpdatedDate(imports.getUpdatedDate());
-        currentImport.get().setDescription(imports.getDescription());
-        currentImport.get().setPaymentMethodId(imports.getPaymentMethodId());
-        currentImport.get().setUserId(imports.getUserId());
-
-
-      currentImport.get().setDescription(imports.getDescription());
-
-      importsService.save(currentImport.get());
-        return new ResponseEntity<>(currentImport.get(), HttpStatus.OK);
+    	
+        return new ResponseEntity<>(imports, HttpStatus.CREATED);
     }
+    
 
     @RequestMapping(value = "/imports/{id}",
             method = RequestMethod.DELETE)
@@ -89,7 +131,7 @@ public class ImportController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         importsService.remove(imports.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
 

@@ -23,7 +23,7 @@ public class Bill {
     private Integer userId;
 
     @Column(name = "tax_code")
-    private Integer taxCode;
+    private String taxCode;
     
     @Temporal(TemporalType.DATE)
     @Column(name = "created_date")
@@ -43,7 +43,7 @@ public class Bill {
     
 
     @Column(name = "total_price")
-    private long totalPrice;
+    private Double totalPrice;
 
 
     public Integer getId() {
@@ -72,19 +72,20 @@ public class Bill {
     }
 
 
-    public Integer getTaxCode() {
-        return taxCode;
-    }
-
-    public void setTaxCode(Integer taxCode) {
-        this.taxCode = taxCode;
-    }
 
 
 
 
 
-    public Date getCreatedDate() {
+    public String getTaxCode() {
+		return taxCode;
+	}
+
+	public void setTaxCode(String taxCode) {
+		this.taxCode = taxCode;
+	}
+
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 
@@ -109,13 +110,15 @@ public class Bill {
 		this.paymentMethodId = paymentMethodId;
 	}
 
-	public long getTotalPrice() {
-        return totalPrice;
-    }
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
 
-    public void setTotalPrice(long totalPrice) {
-        this.totalPrice = totalPrice;
-    }
+	public void setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+
+
 
  
 }

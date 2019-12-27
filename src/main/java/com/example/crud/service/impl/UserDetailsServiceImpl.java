@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Service
@@ -35,12 +37,25 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         User appUser = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("No existe usuario"));
 		
-        List<UserRole> userRoles=userRoleRepository.findByUserId(appUser.getId());
+        List<Integer> roleIdLst=userRoleRepository.findByUserId(appUser.getId());
+        LinkedHashSet<Integer> hashSet = new LinkedHashSet<>(roleIdLst);
+        //loai bo phan tu trung lap
+        ArrayList<Integer> roleIds = new ArrayList<>(hashSet);
+        
+        Iterator<Integer> iter = roleIds.iterator();         
+        List<String> roleNames =  new ArrayList<>();
+        while (iter.hasNext()) { 
+        	String roleName=roleRepository.getRoleName(iter.next());
+        	if (roleName!=null) 
+        	{
+        		roleNames.add(roleName);
+        	}        	
+        } 
         
     List grantList = new ArrayList();
-    for (use role: userRoles) {
+    for (String name: roleNames) {
         // ROLE_USER, ROLE_ADMIN,..
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(role.getRolename());
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(name);
             grantList.add(grantedAuthority);
     }
 	

@@ -21,8 +21,8 @@ public class UserController {
     private UserService userService;
 
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ResponseEntity<List<User>> findAllProvider() {
+    @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
+    public ResponseEntity<List<User>> findAllUser() {
         List<User> users = userService.findAllUser();
         if (users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -30,10 +30,10 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user/{id}",
+    @RequestMapping(value = "/admin/user/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> getProviderById(
+    public ResponseEntity<User> getUserById(
             @PathVariable("id") Integer id) {
         Optional<User> user = userService.findById(id);
 
@@ -44,16 +44,16 @@ public class UserController {
         return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user",
+    @RequestMapping(value = "/admin/user",
             method = RequestMethod.POST)
-    public ResponseEntity<User> createProvider(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody User user) {
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/user/{id}",
+    @RequestMapping(value = "/admin/user/{id}",
             method = RequestMethod.PUT)
-    public ResponseEntity<User> updateProvider(
+    public ResponseEntity<User> updateUser(
             @PathVariable("id") Integer id,
             @RequestBody User user) {
         Optional<User> currentUser = userService.findById(id);
@@ -74,16 +74,16 @@ public class UserController {
         return new ResponseEntity<>(currentUser.get(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user/{id}",
+    @RequestMapping(value = "/admin/user/{id}",
             method = RequestMethod.DELETE)
-    public ResponseEntity<Provider> deleteProvider(
+    public ResponseEntity<Provider> deleteUser(
             @PathVariable("id") Integer id) {
         Optional<User> user = userService.findById(id);
         if (!user.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         userService.remove(user.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
 

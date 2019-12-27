@@ -1,9 +1,7 @@
 package com.example.crud.controller;
 
 
-import com.example.crud.constants.ResponseCode;
 import com.example.crud.repository.CustomerRepository;
-import com.example.crud.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -75,7 +73,6 @@ public class CustomerController {
         currentCustomer.get().setName(customer.getName());
         currentCustomer.get().setAddress(customer.getAddress());
         currentCustomer.get().setDescription(customer.getDescription());
-        currentCustomer.get().setTaxCode(customer.getTaxCode());
         currentCustomer.get().setEmail(customer.getEmail());
         currentCustomer.get().setPhoneNumber(customer.getPhoneNumber());
       currentCustomer.get().setDescription(customer.getDescription());
@@ -93,29 +90,26 @@ public class CustomerController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         customerService.remove(customer.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
 
     @RequestMapping(value = "/customer/search", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     @ResponseBody
-    public ResponseEntity<Response> getListCustomers(
+    public ResponseEntity<List<Customer>> getListCustomers(
             @RequestParam(value = "name", required = false, defaultValue = "") String name,
             @RequestParam(value = "email", required = false, defaultValue = "") String email,
             @RequestParam(value = "phoneNumber", required = false, defaultValue = "") String phoneNumber) {
-        Response response = new Response();
-        List<Customer> customers = null;
-        try {
-            customers = customerRepository.findByCustomer(name,email,phoneNumber);
-            response.setCode(ResponseCode.SUCCESS);
-            response.setData(customers);
-        }catch(Exception e) {
-//            logger.info("ERROR getProviders method GET : " + e.toString());
-            System.out.println("ERROR getProviders method GET : " + e.toString());
+        List<Customer> customers = customerRepository.findByCustomer(name,email,phoneNumber);
+        if (customers.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(customers, HttpStatus.OK);
     }
+    
+    
+
 
 }
 

@@ -30,8 +30,6 @@ public class Customer implements Serializable{
     @Column(name="address")
     private String address;
     
-    @Column(name="tax_code")
-    private String taxCode;
 
     @Column(name="description")  
     private String description;
@@ -68,13 +66,7 @@ public class Customer implements Serializable{
 		this.address = address;
 	}
 
-	public String getTaxCode() {
-		return taxCode;
-	}
 
-	public void setTaxCode(String taxCode) {
-		this.taxCode = taxCode;
-	}
 
 	public String getDescription() {
 		return description;

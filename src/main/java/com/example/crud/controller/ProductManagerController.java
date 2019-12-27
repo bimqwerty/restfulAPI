@@ -1,9 +1,7 @@
 package com.example.crud.controller;
 
-import com.example.crud.constants.ResponseCode;
 import com.example.crud.model.Provider;
 import com.example.crud.repository.ProductRepository;
-import com.example.crud.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -88,24 +86,21 @@ public class ProductManagerController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         productService.remove(product.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/product/search", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     @ResponseBody
-    public ResponseEntity<Response> getListProducts(
+    public ResponseEntity<List<Product>> getListProducts(
             @RequestParam(value = "name", required = false, defaultValue = "") String name
     ) {
-        Response response = new Response();
-        List<Product> products = null;
-        try {
-            products = productRepository.findByProduct(name);
-            response.setCode(ResponseCode.SUCCESS);
-            response.setData(products);
-        }catch(Exception e) {
-//            logger.info("ERROR getProviders method GET : " + e.toString());
-            System.out.println("ERROR getProviders method GET : " + e.toString());
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
+         
+            List<Product> products = productRepository.findByProduct(name);
+            if (products.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(products, HttpStatus.OK);
+            
+
     }
 }

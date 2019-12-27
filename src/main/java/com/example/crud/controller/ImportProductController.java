@@ -24,7 +24,7 @@ public class ImportProductController {
 
 
     @RequestMapping(value = "/importProducts", method = RequestMethod.GET)
-    public ResponseEntity<List<ImportProduct>> findAllProvider() {
+    public ResponseEntity<List<ImportProduct>> findAllProduct() {
         List<ImportProduct> importProducts = importProductService.findAllImportProduct();
         if (importProducts.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -35,7 +35,7 @@ public class ImportProductController {
     @RequestMapping(value = "/importProduct/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImportProduct> getProviderById(
+    public ResponseEntity<ImportProduct> getProductById(
             @PathVariable("id") Integer id) {
         Optional<ImportProduct> importProduct = importProductService.findById(id);
 
@@ -48,14 +48,14 @@ public class ImportProductController {
 
     @RequestMapping(value = "/importProduct",
             method = RequestMethod.POST)
-    public ResponseEntity<ImportProduct> createProvider(@RequestBody ImportProduct importProduct) {
+    public ResponseEntity<ImportProduct> createProduct(@RequestBody ImportProduct importProduct) {
         importProductService.save(importProduct);
         return new ResponseEntity<>(importProduct, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/importProduct/{id}",
             method = RequestMethod.PUT)
-    public ResponseEntity<ImportProduct> updateProvider(
+    public ResponseEntity<ImportProduct> updateProduct(
             @PathVariable("id") Integer id,
             @RequestBody ImportProduct importProduct1) {
         Optional<ImportProduct> importProduct  = importProductService.findById(id);
@@ -71,9 +71,9 @@ public class ImportProductController {
         return new ResponseEntity<>(importProduct.get(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/bill/{id}",
+    @RequestMapping(value = "/importProduct/{id}",
             method = RequestMethod.DELETE)
-    public ResponseEntity<ImportProduct> deleteProvider(
+    public ResponseEntity<ImportProduct> deleteProduct(
             @PathVariable("id") Integer id) {
         Optional<ImportProduct> importProduct = importProductService.findById(id);
         if (!importProduct.isPresent()) {

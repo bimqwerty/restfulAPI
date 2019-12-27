@@ -21,7 +21,7 @@ public class PaymentMethodController {
 
 
     @RequestMapping(value = "/paymentMethods", method = RequestMethod.GET)
-    public ResponseEntity<List<PaymentMethod>> findAllProvider() {
+    public ResponseEntity<List<PaymentMethod>> findAllPaymentMethod() {
         List<PaymentMethod> paymentMethods = paymentMethodService.findAllPaymentMethod();
         if (paymentMethods.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -32,7 +32,7 @@ public class PaymentMethodController {
     @RequestMapping(value = "/paymentMethod/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PaymentMethod> getProviderById(
+    public ResponseEntity<PaymentMethod> getPaymentMethodById(
             @PathVariable("id") Integer id) {
         Optional<PaymentMethod> paymentMethod = paymentMethodService.findById(id);
 
@@ -45,14 +45,14 @@ public class PaymentMethodController {
 
     @RequestMapping(value = "/paymentMethod",
             method = RequestMethod.POST)
-    public ResponseEntity<PaymentMethod> createProvider(@RequestBody PaymentMethod paymentMethod) {
+    public ResponseEntity<PaymentMethod> createPaymentMethod(@RequestBody PaymentMethod paymentMethod) {
         paymentMethodService.save(paymentMethod);
         return new ResponseEntity<>(paymentMethod, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/paymentMethod/{id}",
             method = RequestMethod.PUT)
-    public ResponseEntity<PaymentMethod> updateProvider(
+    public ResponseEntity<PaymentMethod> updatePaymentMethod(
             @PathVariable("id") Integer id,
             @RequestBody PaymentMethod paymentMethod1) {
         Optional<PaymentMethod> paymentMethod  = paymentMethodService.findById(id);
@@ -70,14 +70,14 @@ public class PaymentMethodController {
 
     @RequestMapping(value = "/paymentMethod/{id}",
             method = RequestMethod.DELETE)
-    public ResponseEntity<PaymentMethod> deleteProvider(
+    public ResponseEntity<PaymentMethod> deletePaymentMethod(
             @PathVariable("id") Integer id) {
         Optional<PaymentMethod> paymentMethod = paymentMethodService.findById(id);
         if (!paymentMethod.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         paymentMethodService.remove(paymentMethod.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
 

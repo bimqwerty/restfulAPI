@@ -1,10 +1,7 @@
 package com.example.crud.controller;
 
-
-import com.example.crud.constants.ResponseCode;
 import com.example.crud.model.Customer;
 import com.example.crud.repository.ProviderRepository;
-import com.example.crud.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -90,26 +87,24 @@ public class ProviderController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         providerService.remove(provider.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/provider/search", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     @ResponseBody
-    public ResponseEntity<Response> getListProviders(
+    public ResponseEntity<List<Provider>> getSearchProviders(
             @RequestParam(value = "name", required = false, defaultValue = "") String name
             ) {
-        Response response = new Response();
-        List<Provider> providers = null;
-        try {
-            providers = providerRepository.findByProvider(name);
-            response.setCode(ResponseCode.SUCCESS);
-            response.setData(providers);
-        }catch(Exception e) {
-//            logger.info("ERROR getProviders method GET : " + e.toString());
-            System.out.println("ERROR getProviders method GET : " + e.toString());
+    	
+    	
+        List<Provider> providers = providerRepository.findByProvider(name);
+        if (providers.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(providers, HttpStatus.OK);
+    	
+
     }
 }
 

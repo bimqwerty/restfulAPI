@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoleRepository extends CrudRepository<Role, Integer> {
+    @Query("select r.rolename from Role r where r.id=:roleId")
+    String getRoleName(Integer roleId) ;
 }

@@ -24,7 +24,7 @@ public class ShoppingCart {
     
 
     @Column(name = "total_price")
-    private long totalPrice;
+    private Double totalPrice;
 
     public Integer getId() {
         return id;
@@ -61,14 +61,16 @@ public class ShoppingCart {
         this.amount = amount;
     }
 
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
 
-    public long getTotalPrice() {
-        return totalPrice;
-    }
+	public void setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
+	}
 
-    public void setTotalPrice(long totalPrice) {
-        this.totalPrice = totalPrice;
-    }
+
+ 
 
 
 }

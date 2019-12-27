@@ -2,7 +2,13 @@ package com.example.crud.controller;
 
 
 import com.example.crud.model.Role;
+import com.example.crud.model.User;
+import com.example.crud.model.UserRole;
+import com.example.crud.repository.UserRoleRepository;
 import com.example.crud.service.RoleService;
+import com.example.crud.service.UserRoleService;
+import com.example.crud.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,73 +22,52 @@ import java.util.Optional;
 public class UserRoleController {
 	
 	@Autowired
-    private RoleService roleService;
+    private UserRoleService userRoleService;
+	
+	@Autowired
+    private UserRoleRepository userRoleRepository;
+	
+	@Autowired
+	 private UserService userService;
+	
+	@Autowired
+	 private RoleService roleService;
 
 
-    @RequestMapping(value = "/roles", method = RequestMethod.GET)
-    public ResponseEntity<List<Role>> findAllProvider() {
-        List<Role> roles = roleService.findAllRole();
-        if (roles.isEmpty()) {
+    @RequestMapping(value = "/admin/userRoles", method = RequestMethod.GET)
+    public ResponseEntity<List<UserRole>> findAllUserRole() {
+        List<UserRole> userRoles = userRoleService.findAllUserRole();
+        if (userRoles.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(roles, HttpStatus.OK);
+        return new ResponseEntity<>(userRoles, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/role/{id}",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Role> getProviderById(
-            @PathVariable("id") Integer id) {
-        Optional<Role> role = roleService.findById(id);
-
-        if (!role.isPresent()) {
-            return new ResponseEntity<>(role.get(),
-                    HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(role.get(), HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/role",
+ 
+    @RequestMapping(value = "/admin/userRole",
             method = RequestMethod.POST)
-    public ResponseEntity<Role> createProvider(@RequestBody Role role) {
-        roleService.save(role);
-        return new ResponseEntity<>(role, HttpStatus.CREATED);
+    public ResponseEntity<UserRole> createUserRole(@RequestBody UserRole userRole) {
+    	Optional<User> user = userService.findById(userRole.getUserId());
+    	userRole.setUserName(user.get().getUsername());
+    	Optional<Role> role = roleService.findById(userRole.getRoleId());
+    	userRole.setRoleName(role.get().getRolename());
+        userRoleService.save(userRole);
+        return new ResponseEntity<>(userRole, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/role/{id}",
-            method = RequestMethod.PUT)
-    public ResponseEntity<Role> updateProvider(
-            @PathVariable("id") Integer id,
-            @RequestBody Role role) {
-        Optional<Role> currentRole  = roleService.findById(id);
 
-        if (!currentRole.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
 
-        currentRole.get().setRolename(role.getRolename());
-        currentRole.get().setDescription(role.getDescription());
-//        currentUser.get().setPassword(user.getAddress());
-//        currentUser.get().set(user.getDescription());
-//        currentUser.get().setTaxCode(user.getTaxCode());
-//        currentUser.get().setEmail(user.getEmail());
-//        currentUser.get().setPhoneNumber(user.getPhoneNumber());
-//      currentUser.get().setDescription(user.getDescription());
-
-      roleService.save(currentRole.get());
-        return new ResponseEntity<>(currentRole.get(), HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/role/{id}",
+    @RequestMapping(value = "/admin/userRole/{userId}/{roleId}",
             method = RequestMethod.DELETE)
-    public ResponseEntity<Role> deleteProvider(
-            @PathVariable("id") Integer id) {
-        Optional<Role> role = roleService.findById(id);
-        if (!role.isPresent()) {
+    public ResponseEntity<UserRole> deleteUserRole(
+            @PathVariable("userId") Integer userId,@PathVariable("roleId") Integer roleId) {
+    	userRoleRepository.deleteUR(userId,roleId);
+        Optional<UserRole> userRole = userRoleService.findById(userId);
+        if (!userRole.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        roleService.remove(role.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        userRoleService.remove(userRole.get());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
 

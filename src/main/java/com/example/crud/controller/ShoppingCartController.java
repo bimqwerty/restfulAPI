@@ -20,7 +20,7 @@ public class ShoppingCartController {
     private ShoppingCartService shoppingCartService;
 
 
-    @RequestMapping(value = "/shoppingCartServices", method = RequestMethod.GET)
+    @RequestMapping(value = "/shoppingCart", method = RequestMethod.GET)
     public ResponseEntity<List<ShoppingCart>> findAllProvider() {
         List<ShoppingCart> shoppingCarts = shoppingCartService.findAllShoppingCart();
         if (shoppingCarts.isEmpty()) {
@@ -29,7 +29,7 @@ public class ShoppingCartController {
         return new ResponseEntity<>(shoppingCarts, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/shoppingCartService/{id}",
+    @RequestMapping(value = "/shoppingCart/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ShoppingCart> getProviderById(
@@ -43,14 +43,14 @@ public class ShoppingCartController {
         return new ResponseEntity<>(shoppingCart.get(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/shoppingCartService",
+    @RequestMapping(value = "/shoppingCart",
             method = RequestMethod.POST)
     public ResponseEntity<ShoppingCart> createProvider(@RequestBody ShoppingCart shoppingCart) {
         shoppingCartService.save(shoppingCart);
         return new ResponseEntity<>(shoppingCart, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/shoppingCartService/{id}",
+    @RequestMapping(value = "/shoppingCart/{id}",
             method = RequestMethod.PUT)
     public ResponseEntity<ShoppingCart> updateProvider(
             @PathVariable("id") Integer id,
@@ -70,7 +70,7 @@ public class ShoppingCartController {
         return new ResponseEntity<>(shoppingCart1.get(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/shoppingCartService/{id}",
+    @RequestMapping(value = "/shoppingCart/{id}",
             method = RequestMethod.DELETE)
     public ResponseEntity<ShoppingCart> deleteProvider(
             @PathVariable("id") Integer id) {
